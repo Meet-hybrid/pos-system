@@ -114,9 +114,23 @@
           🧾 Print Receipt
         </button>
 
+        <!-- Customer Email Input
+        <div class="bg-white rounded-2xl shadow p-4">
+          <label class="block text-sm font-medium text-gray-600 mb-2">
+            📧 Customer Email
+          </label>
+          <input
+            v-model="customerEmail"
+            type="email"
+            placeholder="customer@email.com"
+            class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+          />
+        </div> -->
+
         <!-- Charge Button -->
-        <button
+        <button 
           :disabled="cart.length === 0"
+          @click="chargeCustomer"
           class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-colors duration-200"
         >
           💳 Charge Customer
@@ -136,6 +150,7 @@ const feedbackMessage = ref('')
 const scannerInput    = ref(null)
 const cart            = ref([])
 const scanStatus      = ref(null)
+const customerEmail   = ref('')
 // const paymentMethod   = ref('Cash')
 
 onMounted(() => {
@@ -291,6 +306,55 @@ function printReceipt() {
       </body>
     </html>
   `
+
+  function chargeCustomer() {
+  if (cart.value.length === 0) {
+    alert('Please scan items before charging!')
+    return
+  }
+
+  if (!customerEmail.value) {
+    alert('Please enter customer email to proceed!')
+    return
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(customerEmail.value)) {
+    alert('Please enter a valid email address!')
+    return
+  }
+
+  const handler = PaystackPop.setup({
+    key: 'pk_test_12c756d0a90a47ff59b3e632d2c2b1d6d4e04172',
+
+    email: customerEmail.value,
+
+    
+    amount: subtotal.value * 100,
+
+    currency: 'NGN',
+
+    ref: 'POS_' + Date.now(),
+
+    onClose: function() {
+      alert('Payment cancelled by customer.')
+    },
+
+    callback: function(response) {
+      console.log('✅ Payment successful!', response)
+
+      alert(`✅ Payment Successful!\n\nReference: ${response.reference}\nAmount: ₦${subtotal.value}`)
+
+      printReceipt()
+
+      cart.value = []
+      customerEmail.value = ''
+      feedbackMessage.value = ''
+    }
+  })
+
+  handler.openIframe()
+}
 
   // Open a brand new window, write receipt into it, then print it
   const printWindow = window.open('', '_blank', 'width=400,height=600')
