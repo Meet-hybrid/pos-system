@@ -52,7 +52,6 @@ const { addToCart, increaseQty, decreaseQty, removeItem, clearCart } = cartStore
 const feedbackMessage = ref('')
 const scanStatus      = ref(null)
 const scannerRef      = ref(null)
-const customerEmail   = ref('')
 
 onMounted(() => {
   scannerRef.value.focus()
@@ -134,45 +133,25 @@ function chargeCustomer() {
     return
   }
 
-  if (!customerEmail.value) {
-    alert('Please enter customer email to proceed!')
-    return
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(customerEmail.value)) {
-    alert('Please enter a valid email address!')
-    return
-  }
-
   const handler = PaystackPop.setup({
     key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
-
-    email: customerEmail.value,
-
+    email: 'customer@pos.local', // Default email
     amount: subtotal.value * 100,
-
     currency: 'NGN',
-
     ref: 'POS_' + Date.now(),
-
     onClose: function() {
       alert('Payment cancelled by customer.')
     },
-
     callback: function(response) {
       console.log('✅ Payment successful!', response)
-
       alert(`✅ Payment Successful!\n\nReference: ${response.reference}\nAmount: ₦${subtotal.value}`)
-
       printReceipt()
-
       cart.value = []
-      customerEmail.value = ''
       feedbackMessage.value = ''
     }
   })
 
   handler.openIframe()
 }
+
 </script>
