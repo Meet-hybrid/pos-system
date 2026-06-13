@@ -34,6 +34,8 @@
     </div>
   </div>
 </template>
+
+<script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import products from './products.ts'
@@ -42,7 +44,6 @@ import CartList from './components/CartList.vue'
 import OrderSummary from './components/OrderSummary.vue'
 import { useCartStore } from './stores/cartStore'
 import { generateReceiptHTML } from './utils/receiptGenerator'
-// import Receipt from './components/Receipt.vue'
 
 const cartStore = useCartStore()
 const { cart, totalItems, subtotal } = storeToRefs(cartStore)
@@ -52,7 +53,6 @@ const feedbackMessage = ref('')
 const scanStatus      = ref(null)
 const scannerRef      = ref(null)
 const customerEmail   = ref('')
-// const paymentMethod   = ref('Cash')
 
 onMounted(() => {
   scannerRef.value.focus()
@@ -72,6 +72,7 @@ function handleKeydown(event) {
   }
 }
 
+function playBeep(type) {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   const oscillator = audioCtx.createOscillator()
   oscillator.connect(audioCtx.destination)
@@ -149,7 +150,6 @@ function chargeCustomer() {
 
     email: customerEmail.value,
 
-    
     amount: subtotal.value * 100,
 
     currency: 'NGN',
