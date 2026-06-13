@@ -1,6 +1,6 @@
-// src/products.js
+import { Product } from './types'
 
-const products = [
+const products: Product[] = [
   {
     id: 1,
     barcode: "111111",

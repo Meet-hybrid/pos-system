@@ -50,7 +50,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import products from './products.js'
+import products from './products.ts'
 import CartList from './components/CartList.vue'
 import OrderSummary from './components/OrderSummary.vue'
 // import Receipt from './components/Receipt.vue'
