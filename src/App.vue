@@ -120,15 +120,15 @@ function printReceipt() {
   const receiptNumber = Math.floor(Math.random() * 900000) + 100000
 
   // items HTML looping through cart
-  const itemsHTML = cart.value.map(item => `
-    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-      <div>
-        <p style="font-weight:bold; margin:0;">${item.name}</p>
-        <p style="font-size:11px; margin:0; color:#555;">${item.quantity} x ₦${item.price}</p>
-      </div>
-      <p style="font-weight:bold; margin:0;">₦${item.price * item.quantity}</p>
-    </div>
-  `).join('')
+  const itemsHTML = cart.value.map(item => 
+    '<div style="display:flex; justify-content:space-between; margin-bottom:8px;">' +
+      '<div>' +
+        '<p style="font-weight:bold; margin:0;">' + item.name + '</p>' +
+        '<p style="font-size:11px; margin:0; color:#555;">' + item.quantity + ' x ₦' + item.price + '</p>' +
+      '</div>' +
+      '<p style="font-weight:bold; margin:0;">₦' + (item.price * item.quantity) + '</p>' +
+    '</div>'
+  ).join('')
 
   //  receipt HTML
   const receiptHTML = 
