@@ -135,7 +135,7 @@ function chargeCustomer() {
 
   const handler = PaystackPop.setup({
     key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
-    email: 'customer@pos.local', // Default email
+    email: 'customer@example.com', // Updated to a standard domain
     amount: subtotal.value * 100,
     currency: 'NGN',
     ref: 'POS_' + Date.now(),
