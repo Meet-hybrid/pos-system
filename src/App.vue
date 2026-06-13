@@ -28,6 +28,7 @@
         :total-items="totalItems"
         :subtotal="subtotal"
         :is-empty="cart.length === 0"
+        :is-processing="cartStore.isProcessing"
         @print-receipt="printReceipt"
         @charge-customer="chargeCustomer"
       />
@@ -133,13 +134,16 @@ function chargeCustomer() {
     return
   }
 
+  cartStore.isProcessing = true;
+
   const handler = PaystackPop.setup({
     key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
-    email: 'customer@example.com', // Updated to a standard domain
+    email: 'customer@example.com',
     amount: subtotal.value * 100,
     currency: 'NGN',
     ref: 'POS_' + Date.now(),
     onClose: function() {
+      cartStore.isProcessing = false;
       alert('Payment cancelled by customer.')
     },
     callback: function(response) {
@@ -148,6 +152,7 @@ function chargeCustomer() {
       printReceipt()
       cart.value = []
       feedbackMessage.value = ''
+      cartStore.isProcessing = false;
     }
   })
 

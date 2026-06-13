@@ -27,11 +27,11 @@
 
     <!-- Charge Button -->
     <button 
-      :disabled="isEmpty"
+      :disabled="isEmpty || isProcessing"
       @click="$emit('charge-customer')"
       class="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-colors duration-200"
     >
-      💳 Charge Customer
+      {{ isProcessing ? '💳 Processing...' : '💳 Charge Customer' }}
     </button>
   </div>
 </template>
@@ -49,6 +49,10 @@ defineProps({
   isEmpty: {
     type: Boolean,
     required: true
+  },
+  isProcessing: {
+    type: Boolean,
+    default: false
   }
 })
 

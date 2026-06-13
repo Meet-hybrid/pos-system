@@ -12,6 +12,8 @@ export const useCartStore = defineStore('cart', () => {
     localStorage.setItem('pos_cart', JSON.stringify(newCart))
   }, { deep: true })
 
+  const isProcessing = ref(false)
+
   const totalItems = computed(() =>
     cart.value.reduce((sum, item) => sum + item.quantity, 0)
   )
@@ -53,6 +55,7 @@ export const useCartStore = defineStore('cart', () => {
     cart,
     totalItems,
     subtotal,
+    isProcessing,
     addToCart,
     increaseQty,
     decreaseQty,
