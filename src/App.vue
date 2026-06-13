@@ -4,25 +4,12 @@
     <h1 class="text-3xl font-bold text-gray-800 mb-6">🛒 POS Scanner</h1>
 
     <!-- Scanner Input -->
-    <div class="bg-white rounded-2xl shadow p-4 mb-6">
-      <label class="block text-sm font-medium text-gray-600 mb-2">Scan Barcode</label>
-      <input
-        ref="scannerInput"
-        v-model="barcodeValue"
-        @keyup.enter="handleScan"
-        type="text"
-        placeholder="Scan or type barcode here..."
-        :class="[
-          'w-full border-2 rounded-xl px-4 py-3 text-lg focus:outline-none transition-colors duration-300',
-          scanStatus === 'success' ? 'border-green-400 bg-green-50' :
-          scanStatus === 'error'   ? 'border-red-400 bg-red-50' :
-                                     'border-blue-400 bg-white'
-        ]"
-      />
-      <p v-if="feedbackMessage" class="text-red-500 font-medium mt-2">
-        {{ feedbackMessage }}
-      </p>
-    </div>
+    <ScannerInput
+      ref="scannerRef"
+      :feedback-message="feedbackMessage"
+      :scan-status="scanStatus"
+      @scan="handleScan"
+    />
 
     <!-- Main Layout -->
     <div class="flex gap-6">
@@ -52,6 +39,7 @@
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import products from './products.ts'
+import ScannerInput from './components/ScannerInput.vue'
 import CartList from './components/CartList.vue'
 import OrderSummary from './components/OrderSummary.vue'
 import { useCartStore } from './stores/cartStore'
@@ -61,16 +49,11 @@ const cartStore = useCartStore()
 const { cart, totalItems, subtotal } = storeToRefs(cartStore)
 const { addToCart, increaseQty, decreaseQty, removeItem, clearCart } = cartStore
 
-const barcodeValue    = ref('')
 const feedbackMessage = ref('')
-const scannerInput    = ref(null)
 const scanStatus      = ref(null)
+const scannerRef      = ref(null)
 const customerEmail   = ref('')
 // const paymentMethod   = ref('Cash')
-
-onMounted(() => {
-  scannerInput.value.focus()
-})
 
 function playBeep(type) {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
@@ -92,11 +75,11 @@ function triggerFlash(type) {
   setTimeout(() => { scanStatus.value = null }, 600)
 }
 
-function handleScan() {
-  const scannedCode = barcodeValue.value.trim()
-  if (!scannedCode) return
+function handleScan(scannedCode) {
+  const code = scannedCode.trim()
+  if (!code) return
 
-  const product = products.find(p => p.barcode === scannedCode)
+  const product = products.find(p => p.barcode === code)
 
   if (product) {
     feedbackMessage.value = ''
@@ -104,13 +87,13 @@ function handleScan() {
     playBeep('success')
     triggerFlash('success')
   } else {
-    feedbackMessage.value = `❌ No product found for barcode: ${scannedCode}`
+    feedbackMessage.value = `❌ No product found for barcode: ${code}`
     playBeep('error')
     triggerFlash('error')
   }
 
-  barcodeValue.value = ''
-  scannerInput.value.focus()
+  scannerRef.value.clear()
+  scannerRef.value.focus()
 }
 
 function printReceipt() {
