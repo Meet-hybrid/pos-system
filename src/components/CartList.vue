@@ -11,10 +11,10 @@
       </button>
     </div>
 
-    <div v-if="cart.length === 0" class="text-center text-gray-400 py-12">
-      <p class="text-5xl mb-3">📭</p>
-      <p class="text-lg">No items scanned yet</p>
-      <p class="text-sm">Scan a barcode to get started</p>
+    <div v-if="cart.length === 0" class="text-center text-gray-400 py-16 px-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+      <p class="text-6xl mb-4">🛒</p>
+      <p class="text-xl font-semibold text-gray-600">Your cart is waiting</p>
+      <p class="text-sm mt-2 text-gray-500">Scan a barcode to add products</p>
     </div>
 
     <div v-else class="divide-y divide-gray-100">

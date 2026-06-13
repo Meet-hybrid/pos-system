@@ -34,9 +34,7 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import products from './products.ts'
 import ScannerInput from './components/ScannerInput.vue'
@@ -55,7 +53,24 @@ const scannerRef      = ref(null)
 const customerEmail   = ref('')
 // const paymentMethod   = ref('Cash')
 
-function playBeep(type) {
+onMounted(() => {
+  scannerRef.value.focus()
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
+})
+
+function handleKeydown(event) {
+  if (event.altKey && event.key === 'c') {
+    chargeCustomer()
+  }
+  if (event.altKey && event.key === 'p') {
+    printReceipt()
+  }
+}
+
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
   const oscillator = audioCtx.createOscillator()
   oscillator.connect(audioCtx.destination)
