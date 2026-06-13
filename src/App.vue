@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 p-6">
+  <div class="min-h-screen bg-bg-app p-6">
 
     <h1 class="text-3xl font-bold text-gray-800 mb-6">🛒 POS Scanner</h1>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 bg-white rounded-2xl shadow p-4">
+  <div class="flex-1 bg-surface rounded-card shadow p-4">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold text-gray-700">🧾 Cart Items</h2>
       <button

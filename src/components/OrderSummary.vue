@@ -1,6 +1,6 @@
 <template>
   <div class="w-72 flex flex-col gap-4">
-    <div class="bg-white rounded-2xl shadow p-4">
+    <div class="bg-surface rounded-card shadow p-4">
       <h2 class="text-xl font-bold text-gray-700 mb-4">📋 Order Summary</h2>
       <div class="flex justify-between text-gray-600 mb-2">
         <span>Items</span><span>{{ totalItems }}</span>
@@ -29,7 +29,7 @@
     <button 
       :disabled="isEmpty"
       @click="$emit('charge-customer')"
-      class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-colors duration-200"
+      class="w-full bg-primary hover:bg-primary-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-colors duration-200"
     >
       💳 Charge Customer
     </button>
