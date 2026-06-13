@@ -49,16 +49,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import products from './products.ts'
 import CartList from './components/CartList.vue'
 import OrderSummary from './components/OrderSummary.vue'
+import { useCartStore } from './stores/cartStore'
 // import Receipt from './components/Receipt.vue'
+
+const cartStore = useCartStore()
+const { cart, totalItems, subtotal } = storeToRefs(cartStore)
+const { addToCart, increaseQty, decreaseQty, removeItem, clearCart } = cartStore
 
 const barcodeValue    = ref('')
 const feedbackMessage = ref('')
 const scannerInput    = ref(null)
-const cart            = ref([])
 const scanStatus      = ref(null)
 const customerEmail   = ref('')
 // const paymentMethod   = ref('Cash')
@@ -66,14 +71,6 @@ const customerEmail   = ref('')
 onMounted(() => {
   scannerInput.value.focus()
 })
-
-const totalItems = computed(() =>
-  cart.value.reduce((sum, item) => sum + item.quantity, 0)
-)
-
-const subtotal = computed(() =>
-  cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-)
 
 function playBeep(type) {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
@@ -114,29 +111,6 @@ function handleScan() {
 
   barcodeValue.value = ''
   scannerInput.value.focus()
-}
-
-function addToCart(product) {
-  const existingItem = cart.value.find(item => item.id === product.id)
-  if (existingItem) {
-    existingItem.quantity++
-  } else {
-    cart.value.push({ ...product, quantity: 1 })
-  }
-}
-
-function increaseQty(item) { item.quantity++ }
-
-function decreaseQty(item) {
-  if (item.quantity > 1) { item.quantity-- } else { removeItem(item) }
-}
-
-function removeItem(item) {
-  cart.value = cart.value.filter(i => i.id !== item.id)
-}
-
-function clearCart() {
-  cart.value = []
 }
 
 function printReceipt() {
