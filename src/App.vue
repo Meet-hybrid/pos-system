@@ -28,114 +28,22 @@
     <div class="flex gap-6">
 
       <!-- LEFT: Cart Items -->
-      <div class="flex-1 bg-white rounded-2xl shadow p-4">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold text-gray-700">🧾 Cart Items</h2>
-          <button
-            v-if="cart.length > 0"
-            @click="clearCart"
-            class="text-sm text-red-400 hover:text-red-600 font-medium transition-colors"
-          >
-            🧹 Clear All
-          </button>
-        </div>
-
-        <div v-if="cart.length === 0" class="text-center text-gray-400 py-12">
-          <p class="text-5xl mb-3">📭</p>
-          <p class="text-lg">No items scanned yet</p>
-          <p class="text-sm">Scan a barcode to get started</p>
-        </div>
-
-        <div v-else class="divide-y divide-gray-100">
-          <div
-            v-for="item in cart"
-            :key="item.id"
-            class="flex items-center justify-between py-3"
-          >
-            <div class="flex-1">
-              <p class="font-semibold text-gray-800">{{ item.name }}</p>
-              <p class="text-sm text-gray-400">₦{{ item.price }} each</p>
-            </div>
-            <div class="flex items-center gap-2 mx-4">
-              <button @click="decreaseQty(item)"
-                class="w-7 h-7 rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-600 font-bold text-lg flex items-center justify-center transition-colors">
-                −
-              </button>
-              <span class="bg-blue-100 text-blue-700 font-bold px-3 py-1 rounded-full text-sm min-w-[2.5rem] text-center">
-                {{ item.quantity }}
-              </span>
-              <button @click="increaseQty(item)"
-                class="w-7 h-7 rounded-full bg-gray-100 hover:bg-green-100 hover:text-green-600 font-bold text-lg flex items-center justify-center transition-colors">
-                +
-              </button>
-            </div>
-            <div class="text-right flex items-center gap-3">
-              <p class="font-bold text-gray-800">₦{{ item.price * item.quantity }}</p>
-              <button @click="removeItem(item)"
-                class="text-gray-300 hover:text-red-500 transition-colors text-xl">
-                ✕
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CartList
+        :cart="cart"
+        @clear-cart="clearCart"
+        @decrease-qty="decreaseQty"
+        @increase-qty="increaseQty"
+        @remove-item="removeItem"
+      />
 
       <!-- RIGHT: Summary -->
-      <div class="w-72 flex flex-col gap-4">
-        <div class="bg-white rounded-2xl shadow p-4">
-          <h2 class="text-xl font-bold text-gray-700 mb-4">📋 Order Summary</h2>
-          <div class="flex justify-between text-gray-600 mb-2">
-            <span>Items</span><span>{{ totalItems }}</span>
-          </div>
-          <div class="border-t border-gray-100 my-3"></div>
-          <div class="flex justify-between text-gray-600 mb-2">
-            <span>Subtotal</span><span>₦{{ subtotal }}</span>
-          </div>
-          <div class="border-t border-dashed border-gray-300 my-3"></div>
-          <div class="flex justify-between items-center">
-            <span class="text-xl font-bold text-gray-800">Total</span>
-            <span class="text-2xl font-extrabold text-blue-600">₦{{ subtotal }}</span>
-          </div>
-        </div>
-
-        <!-- Receipt component (invisible on screen, shows when printing) -->
-        <!-- <Receipt
-          :cart="cart"
-          :subtotal="subtotal"
-          :paymentMethod="paymentMethod"
-        /> -->
-
-        <!-- Print Button -->
-        <button
-          :disabled="cart.length === 0"
-          @click="printReceipt"
-          class="w-full bg-gray-700 hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-colors duration-200"
-        >
-          🧾 Print Receipt
-        </button>
-
-        <!-- Customer Email Input
-        <div class="bg-white rounded-2xl shadow p-4">
-          <label class="block text-sm font-medium text-gray-600 mb-2">
-            📧 Customer Email
-          </label>
-          <input
-            v-model="customerEmail"
-            type="email"
-            placeholder="customer@email.com"
-            class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-          />
-        </div> -->
-
-        <!-- Charge Button -->
-        <button 
-          :disabled="cart.length === 0"
-          @click="chargeCustomer"
-          class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-2xl text-lg transition-colors duration-200"
-        >
-          💳 Charge Customer
-        </button>
-      </div>
+      <OrderSummary
+        :total-items="totalItems"
+        :subtotal="subtotal"
+        :is-empty="cart.length === 0"
+        @print-receipt="printReceipt"
+        @charge-customer="chargeCustomer"
+      />
     </div>
   </div>
 </template>
@@ -143,6 +51,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import products from './products.js'
+import CartList from './components/CartList.vue'
+import OrderSummary from './components/OrderSummary.vue'
 // import Receipt from './components/Receipt.vue'
 
 const barcodeValue    = ref('')
@@ -325,7 +235,7 @@ function printReceipt() {
   }
 
   const handler = PaystackPop.setup({
-    key: 'pk_test_12c756d0a90a47ff59b3e632d2c2b1d6d4e04172',
+    key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
 
     email: customerEmail.value,
 
