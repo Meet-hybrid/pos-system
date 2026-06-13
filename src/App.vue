@@ -115,7 +115,19 @@ function handleScan(scannedCode) {
 function printReceipt() {
   const receiptHTML = generateReceiptHTML(cart.value, subtotal.value);
 
-  function chargeCustomer() {
+  // Open a brand new window, write receipt into it, then print it
+  const printWindow = window.open('', '_blank', 'width=400,height=600')
+  printWindow.document.write(receiptHTML)
+  printWindow.document.close()
+
+  // Small delay to make sure content loads before printing
+  setTimeout(() => {
+    printWindow.print()
+    printWindow.close()
+  }, 300)
+}
+
+function chargeCustomer() {
   if (cart.value.length === 0) {
     alert('Please scan items before charging!')
     return
@@ -162,17 +174,5 @@ function printReceipt() {
   })
 
   handler.openIframe()
-}
-
-  // Open a brand new window, write receipt into it, then print it
-  const printWindow = window.open('', '_blank', 'width=400,height=600')
-  printWindow.document.write(receiptHTML)
-  printWindow.document.close()
-
-  // Small delay to make sure content loads before printing
-  setTimeout(() => {
-    printWindow.print()
-    printWindow.close()
-  }, 300)
 }
 </script>
